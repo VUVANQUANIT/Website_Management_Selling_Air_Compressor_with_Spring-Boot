@@ -1,0 +1,134 @@
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: #F5F5F5;
+    color: #333;
+}
+
+.navbar {
+    background-color: #1F2023 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    color: #FFFFFF !important;
+}
+
+.nav-link {
+    color: #FFFFFF !important;
+}
+
+.nav-link.active {
+    font-weight: bold;
+    color: #FFFFFF !important;
+}
+
+.search-input {
+    border-radius: 20px;
+    border: 1px solid #1E88E5;
+}
+
+.btn-outline-primary {
+    border-color: #1E88E5;
+    color: #1E88E5;
+}
+
+.btn-outline-primary:hover {
+    background-color: #1E88E5;
+    color: #FFFFFF;
+}
+
+.btn-primary {
+    background-color: #1E88E5;
+    border-color: #1E88E5;
+}
+
+.btn-primary:hover {
+    background-color: #1565C0;
+    border-color: #1565C0;
+}
+.me-2{
+    color: #FFFFFF;
+}
+.product-card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    color: #1E88E5;
+}
+
+.card-text {
+    color: #555;
+}
+
+.text-success {
+    color: #28A745 !important;
+}
+
+.modal-content {
+    border-radius: 10px;
+    border: none;
+}
+
+.modal-header {
+    background-color: #E3F2FD;
+    border-bottom: none;
+}
+
+.modal-title {
+    color: #1E88E5;
+}
+
+.form-control:focus {
+    border-color: #1E88E5;
+    box-shadow: 0 0 0 0.2rem rgba(30, 136, 229, 0.25);
+}
+
+/* CSS cho trang chi tiết sản phẩm */
+.product-detail-img {
+    max-height: 500px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.quantity-control .quantity-input {
+    width: 60px;
+    text-align: center;
+    margin: 0 10px;
+}
+
+.quantity-control .btn-sm {
+    padding: 0.25rem 0.5rem;
+}
+
+@media (max-width: 576px) {
+    .auth-buttons {
+        margin-top: 10px;
+    }
+
+    .product-detail-img {
+        max-height: 300px;
+    }
+
+    .quantity-control .quantity-input {
+        width: 50px;
+    }
+}

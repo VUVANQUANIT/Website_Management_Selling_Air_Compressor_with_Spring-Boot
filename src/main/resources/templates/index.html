@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Máy Hơi Shop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/css/style.css?v=2}">
+</head>
+
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">Máy Hơi Shop</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">Trang chủ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/products">Sản phẩm</a>
+                </li>
+            </ul>
+            <form class="d-flex me-3" th:action="@{/products}" method="get">
+                <input class="form-control me-2 search-input" type="search" name="search" placeholder="Tìm kiếm sản phẩm..." aria-label="Search">
+                <button class="btn btn-outline-primary" type="submit">Tìm</button>
+            </form>
+            <div class="auth-buttons d-flex align-items-center">
+                <div th:if="${session.loggedInUser != null}">
+                    <span class="navbar-text me-2">Xin chào, <span th:text="${session.loggedInUser.username}"></span></span>
+                    <a class="btn btn-outline-primary me-2" th:href="@{/logout}">Đăng xuất</a>
+                    <a href="/cart" class="btn btn-warning position-relative">
+                        <i class="bi bi-cart-fill"></i> Giỏ hàng
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" th:text="${#lists.size(cart?.items) ?: 0}" style="font-size: 0.7rem;"></span>
+                    </a>
+                </div>
+                <div th:if="${session.loggedInUser == null}">
+                    <button class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Đăng nhập</button>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">Đăng ký</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Main content -->
+<div class="container mt-5 pt-5">
+    <h1 class="text-center mb-4">Chào mừng đến với Máy Hơi Shop</h1>
+    <p class="text-center mb-5">Chuyên cung cấp các loại máy hơi chất lượng cao với giá cả hợp lý.</p>
+    <div class="text-center">
+        <a href="/products" class="btn btn-primary btn-lg">Xem sản phẩm</a>
+    </div>
+</div>
+
+<!-- Login Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginModalLabel">Đăng nhập</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div th:if="${error}" class="alert alert-danger">
+                    <span th:text="${error}"></span>
+                </div>
+                <form th:action="@{/login}" method="post">
+                    <div class="mb-3">
+                        <label for="loginUsername" class="form-label">Tên người dùng</label>
+                        <input type="text" class="form-control" id="loginUsername" name="username" placeholder="Nhập tên người dùng" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="loginPassword" class="form-label">Mật khẩu</label>
+                        <input type="password" class="form-control" id="loginPassword" name="password" placeholder="Nhập mật khẩu" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Register Modal -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registerModalLabel">Đăng ký</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div th:if="${success}" class="alert alert-success">
+                    <span th:text="${success}"></span>
+                </div>
+                <div th:if="${error}" class="alert alert-danger">
+                    <span th:text="${error}"></span>
+                </div>
+                <form th:action="@{/register}" method="post">
+                    <div class="mb-3">
+                        <label for="registerUsername" class="form-label">Tên người dùng</label>
+                        <input type="text" class="form-control" id="registerUsername" name="username" placeholder="Nhập tên người dùng" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="registerEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="registerEmail" name="email" placeholder="Nhập email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="registerPassword" class="form-label">Mật khẩu</label>
+                        <input type="password" class="form-control" id="registerPassword" name="password" placeholder="Nhập mật khẩu" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Đăng ký</button>
+                </form>
+                <p class="text-center mt-3">
+                    Đã có tài khoản? <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal">Đăng nhập ngay</button>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const error = /*[[${error}]]*/ null;
+        const success = /*[[${success}]]*/ null;
+        if (error) {
+            const currentUrl = window.location.pathname;
+            if (currentUrl.includes("login")) {
+                const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                loginModal.show();
+            } else {
+                const registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+                registerModal.show();
+            }
+        } else if (success) {
+            const registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+            registerModal.show();
+        }
+    });
+</script>

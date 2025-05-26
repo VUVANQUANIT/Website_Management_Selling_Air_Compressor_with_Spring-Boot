@@ -20,19 +20,20 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Tắt CSRF
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/products/**", "/css/**", "/images/**", "/login", "/register", "/logout", "/cart/**").permitAll()
+                        .requestMatchers("/", "/products/**", "/css/**", "/images/**", "/login", "/register", "/logout").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login") // Chỉ định trang đăng nhập tùy chỉnh
+                        .loginPage("/login")
+                        .loginProcessingUrl("/perform_login")
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .permitAll()
-                );
+                )
+                .csrf().disable(); // Tạm tắt CSRF để test
 
         return http.build();
     }

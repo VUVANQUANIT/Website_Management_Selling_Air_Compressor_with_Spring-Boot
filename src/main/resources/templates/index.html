@@ -5,10 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Máy Hơi Shop</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <link rel="stylesheet" th:href="@{/css/style.css?v=2}">
+    <link rel="stylesheet" th:href="@{/css/style.css?v=2}" onerror="console.error('Failed to load styles.css')">
 </head>
-
 <body>
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light fixed-top">
@@ -30,14 +28,10 @@
                 <input class="form-control me-2 search-input" type="search" name="search" placeholder="Tìm kiếm sản phẩm..." aria-label="Search">
                 <button class="btn btn-outline-primary" type="submit">Tìm</button>
             </form>
-            <div class="auth-buttons d-flex align-items-center">
+            <div class="auth-buttons">
                 <div th:if="${session.loggedInUser != null}">
                     <span class="navbar-text me-2">Xin chào, <span th:text="${session.loggedInUser.username}"></span></span>
-                    <a class="btn btn-outline-primary me-2" th:href="@{/logout}">Đăng xuất</a>
-                    <a href="/cart" class="btn btn-warning position-relative">
-                        <i class="bi bi-cart-fill"></i> Giỏ hàng
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" th:text="${#lists.size(cart?.items) ?: 0}" style="font-size: 0.7rem;"></span>
-                    </a>
+                    <a class="btn btn-outline-primary" th:href="@{/logout}">Đăng xuất</a>
                 </div>
                 <div th:if="${session.loggedInUser == null}">
                     <button class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Đăng nhập</button>
@@ -66,10 +60,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div th:if="${error}" class="alert alert-danger">
-                    <span th:text="${error}"></span>
-                </div>
-                <form th:action="@{/login}" method="post">
+                <div id="loginMessage"></div>
+                <form id="loginForm" th:action="@{/login}" method="post">
                     <div class="mb-3">
                         <label for="loginUsername" class="form-label">Tên người dùng</label>
                         <input type="text" class="form-control" id="loginUsername" name="username" placeholder="Nhập tên người dùng" required>
@@ -94,13 +86,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div th:if="${success}" class="alert alert-success">
-                    <span th:text="${success}"></span>
-                </div>
-                <div th:if="${error}" class="alert alert-danger">
-                    <span th:text="${error}"></span>
-                </div>
-                <form th:action="@{/register}" method="post">
+                <div id="registerMessage"></div>
+                <form id="registerForm" th:action="@{/register}" method="post">
                     <div class="mb-3">
                         <label for="registerUsername" class="form-label">Tên người dùng</label>
                         <input type="text" class="form-control" id="registerUsername" name="username" placeholder="Nhập tên người dùng" required>
@@ -115,31 +102,71 @@
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Đăng ký</button>
                 </form>
-                <p class="text-center mt-3">
-                    Đã có tài khoản? <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal">Đăng nhập ngay</button>
-                </p>
             </div>
         </div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script th:inline="javascript">
-    document.addEventListener('DOMContentLoaded', function () {
-        const error = /*[[${error}]]*/ null;
-        const success = /*[[${success}]]*/ null;
-        if (error) {
-            const currentUrl = window.location.pathname;
-            if (currentUrl.includes("login")) {
-                const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-                loginModal.show();
-            } else {
-                const registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
-                registerModal.show();
-            }
-        } else if (success) {
-            const registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
-            registerModal.show();
-        }
+<script>
+    // Xử lý form đăng nhập
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        fetch('/login', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const messageDiv = document.getElementById('loginMessage');
+                if (data.success) {
+                    messageDiv.innerHTML = `<div class="alert alert-success">${data.success}</div>`;
+                    setTimeout(() => { window.location.href = '/'; }, 1000); // Chuyển hướng sau 1 giây
+                } else if (data.error) {
+                    messageDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                }
+            })
+            .catch(error => {
+                document.getElementById('loginMessage').innerHTML =
+                    '<div class="alert alert-danger">Đã có lỗi xảy ra. Vui lòng thử lại.</div>';
+                console.error('Error:', error);
+            });
+    });
+
+    // Xử lý form đăng ký
+    document.getElementById('registerForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        fetch('/register', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const messageDiv = document.getElementById('registerMessage');
+                if (data.success) {
+                    messageDiv.innerHTML = `<div class="alert alert-success">${data.success}</div>`;
+                } else if (data.error) {
+                    messageDiv.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                }
+            })
+            .catch(error => {
+                document.getElementById('registerMessage').innerHTML =
+                    '<div class="alert alert-danger">Đã có lỗi xảy ra. Vui lòng thử lại.</div>';
+                console.error('Error:', error);
+            });
     });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

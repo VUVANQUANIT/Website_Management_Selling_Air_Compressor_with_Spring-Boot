@@ -23,6 +23,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/products">Sản phẩm</a>
                 </li>
+                <li class="nav-item" th:if="${session.loggedInUser != null}">
+                    <a class="nav-link" href="/cart">Giỏ hàng</a>
+                </li>
             </ul>
             <form class="d-flex me-3" th:action="@{/products}" method="get">
                 <input class="form-control me-2 search-input" type="search" name="search" placeholder="Tìm kiếm sản phẩm..." aria-label="Search">
@@ -114,7 +117,8 @@
         const formData = new FormData(this);
         fetch('/login', {
             method: 'POST',
-            body: formData
+            body: formData,
+            credentials: 'same-origin'
         })
             .then(response => {
                 if (!response.ok) {
@@ -144,7 +148,8 @@
         const formData = new FormData(this);
         fetch('/register', {
             method: 'POST',
-            body: formData
+            body: formData,
+            credentials: 'same-origin'
         })
             .then(response => {
                 if (!response.ok) {
